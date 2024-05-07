@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: booking-service
+  name: booking-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: booking-service
+  strategy: {}
+  template:
+    metadata:
+
+      labels:
+        app: booking-service
+    spec:
+      containers:
+        - env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres-booking:5431/booking-service
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          image: niziolekp/booking-service:latest
+          name: booking-service
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: booking-service
+  name: booking-service
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 9193
+  selector:
+    app: booking-service
+status:
+  loadBalancer: {}
